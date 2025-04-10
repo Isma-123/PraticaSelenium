@@ -1,0 +1,90 @@
+﻿
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Login</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+        }
+
+        nav a {
+            margin-right: 15px;
+            text-decoration: none;
+            color: #007BFF;
+        }
+
+            nav a:hover {
+                text-decoration: underline;
+            }
+
+        form {
+            max-width: 300px;
+        }
+
+        input {
+            display: block;
+            margin-bottom: 10px;
+            width: 100%;
+            padding: 8px;
+        }
+
+        .mensaje {
+            margin-top: 20px;
+            color: green;
+        }
+
+        .error {
+            color: red;
+        }
+    </style>
+</head>
+<body>
+    <nav>
+        <a href="index.html">Inicio</a>
+        <a href="registro.html">Registro</a>
+        <a href="busqueda.html">Búsqueda</a>
+        <a href="carrito.html">Carrito</a>
+        <a href="pago.html">Pago</a>
+    </nav>
+    <h1>Login</h1>
+    <form id="loginForm">
+        <input type="email" id="email" placeholder="Correo electrónico" required>
+        <input type="password" id="password" placeholder="Contraseña" required>
+        <button type="submit">Iniciar Sesión</button>
+    </form>
+    <div id="mensaje"></div>
+
+    <script>
+        document.getElementById('loginForm').addEventListener('submit', function(e) {
+          e.preventDefault();
+
+          // Datos del formulario
+          var email = document.getElementById('email').value;
+          var password = document.getElementById('password').value;
+
+          // Se intenta obtener usuarios registrados desde localStorage
+          var usuarios = JSON.parse(localStorage.getItem('usuarios')) || [];
+
+          // Usuario por defecto (si no existe ninguno registrado)
+          if(usuarios.length === 0){
+            usuarios.push({ nombre: "Usuario Predeterminado", email: "usuario@example.com", password: "contraseña123" });
+          }
+
+          // Buscar si el usuario y contraseña coinciden
+          var usuarioValido = usuarios.find(function(u) {
+            return u.email === email && u.password === password;
+          });
+
+          var mensajeDiv = document.getElementById('mensaje');
+          if (usuarioValido) {
+            mensajeDiv.innerHTML = "<p class='mensaje'>Login exitoso. Bienvenido, " + usuarioValido.nombre + ".</p>";
+          } else {
+            mensajeDiv.innerHTML = "<p class='error'>Credenciales incorrectas.</p>";
+          }
+        });
+    </script>
+</body>
+</html>

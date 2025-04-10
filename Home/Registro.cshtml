@@ -1,0 +1,174 @@
+﻿
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Registro - Gestión de Usuarios</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+        }
+
+        nav a {
+            margin-right: 15px;
+            text-decoration: none;
+            color: #007BFF;
+        }
+
+            nav a:hover {
+                text-decoration: underline;
+            }
+
+        form {
+            max-width: 400px;
+            margin-bottom: 20px;
+        }
+
+        input {
+            display: block;
+            margin-bottom: 10px;
+            padding: 8px;
+            width: 100%;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+
+        th, td {
+            border: 1px solid #ddd;
+            padding: 8px;
+            text-align: left;
+        }
+
+        tr:nth-child(even) {
+            background-color: #f9f9f9;
+        }
+
+        .accion {
+            cursor: pointer;
+            color: #007BFF;
+        }
+    </style>
+</head>
+<body>
+    <nav>
+        <a href="index.html">Inicio</a>
+        <a href="login.html">Login</a>
+        <a href="busqueda.html">Búsqueda</a>
+        <a href="carrito.html">Carrito</a>
+        <a href="pago.html">Pago</a>
+    </nav>
+    <h1>Registro y Gestión de Usuarios</h1>
+
+    <form id="userForm">
+        <input type="text" id="nombre" placeholder="Nombre" required>
+        <input type="email" id="email" placeholder="Correo electrónico" required>
+        <input type="password" id="password" placeholder="Contraseña" required>
+        <button type="submit">Agregar Usuario</button>
+        <button type="button" id="cancelarEdicion" style="display:none;">Cancelar Edición</button>
+    </form>
+
+    <table id="userTable">
+        <thead>
+            <tr>
+                <th>Nombre</th>
+                <th>Correo</th>
+                <th>Acciones</th>
+            </tr>
+        </thead>
+        <tbody>
+            <!-- Se llenará dinámicamente -->
+        </tbody>
+    </table>
+
+    <script>
+        var editIndex = -1; // Control de edición
+
+        // Cargar usuarios desde localStorage o inicializar arreglo vacío
+        function cargarUsuarios() {
+          return JSON.parse(localStorage.getItem('usuarios')) || [];
+        }
+
+        // Guardar usuarios en localStorage
+        function guardarUsuarios(usuarios) {
+          localStorage.setItem('usuarios', JSON.stringify(usuarios));
+        }
+
+        // Renderizar la tabla de usuarios
+        function renderUsuarios() {
+          var usuarios = cargarUsuarios();
+          var tbody = document.getElementById('userTable').getElementsByTagName('tbody')[0];
+          tbody.innerHTML = "";
+          usuarios.forEach(function(usuario, index) {
+            var fila = tbody.insertRow();
+            fila.insertCell(0).innerText = usuario.nombre;
+            fila.insertCell(1).innerText = usuario.email;
+            // Acciones: Editar y Eliminar
+            var acciones = fila.insertCell(2);
+            acciones.innerHTML = "<span class='accion' onclick='editarUsuario(" + index + ")'>Editar</span> | " +
+                                 "<span class='accion' onclick='eliminarUsuario(" + index + ")'>Eliminar</span>";
+          });
+        }
+
+        // Manejar envío del formulario para agregar o actualizar usuario
+        document.getElementById('userForm').addEventListener('submit', function(e) {
+          e.preventDefault();
+          var nombre = document.getElementById('nombre').value;
+          var email = document.getElementById('email').value;
+          var password = document.getElementById('password').value;
+          var usuarios = cargarUsuarios();
+
+          if (editIndex === -1) {
+            // Crear usuario nuevo
+            usuarios.push({ nombre: nombre, email: email, password: password });
+          } else {
+            // Actualizar usuario existente
+            usuarios[editIndex] = { nombre: nombre, email: email, password: password };
+            editIndex = -1;
+            document.getElementById('cancelarEdicion').style.display = "none";
+          }
+          guardarUsuarios(usuarios);
+          renderUsuarios();
+          // Limpiar formulario
+          document.getElementById('userForm').reset();
+        });
+
+        // Función para editar usuario
+        function editarUsuario(index) {
+          var usuarios = cargarUsuarios();
+          var usuario = usuarios[index];
+          document.getElementById('nombre').value = usuario.nombre;
+          document.getElementById('email').value = usuario.email;
+          document.getElementById('password').value = usuario.password;
+          editIndex = index;
+          document.getElementById('cancelarEdicion').style.display = "inline-block";
+        }
+
+        // Cancelar edición
+        document.getElementById('cancelarEdicion').addEventListener('click', function() {
+          editIndex = -1;
+          this.style.display = "none";
+          document.getElementById('userForm').reset();
+        });
+
+        // Función para eliminar usuario
+        function eliminarUsuario(index) {
+          var usuarios = cargarUsuarios();
+          usuarios.splice(index, 1);
+          guardarUsuarios(usuarios);
+          renderUsuarios();
+        }
+
+        // Se hace accesible al ámbito global para el onclick en el HTML
+        window.editarUsuario = editarUsuario;
+        window.eliminarUsuario = eliminarUsuario;
+
+        // Renderizar usuarios al cargar la página
+        renderUsuarios();
+    </script>
+</body>
+</html>

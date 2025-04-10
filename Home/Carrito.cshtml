@@ -1,0 +1,163 @@
+﻿@*
+    For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
+*@
+@{
+}
+
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Gestión de Productos</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+        }
+
+        nav a {
+            margin-right: 15px;
+            text-decoration: none;
+            color: #007BFF;
+        }
+
+            nav a:hover {
+                text-decoration: underline;
+            }
+
+        form {
+            max-width: 400px;
+            margin-bottom: 20px;
+        }
+
+        input {
+            display: block;
+            margin-bottom: 10px;
+            padding: 8px;
+            width: 100%;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+
+        th, td {
+            border: 1px solid #ddd;
+            padding: 8px;
+            text-align: left;
+        }
+
+        tr:nth-child(even) {
+            background-color: #f9f9f9;
+        }
+
+        .accion {
+            cursor: pointer;
+            color: #007BFF;
+        }
+    </style>
+</head>
+<body>
+    <nav>
+        <a href="index.html">Inicio</a>
+        <a href="login.html">Login</a>
+        <a href="registro.html">Registro</a>
+        <a href="carrito.html">Carrito</a>
+        <a href="pago.html">Pago</a>
+    </nav>
+    <h1>Gestión de Productos</h1>
+
+    <form id="productForm">
+        <input type="text" id="productName" placeholder="Nombre del producto" required>
+        <input type="number" id="productPrice" placeholder="Precio" step="0.01" required>
+        <button type="submit">Agregar Producto</button>
+        <button type="button" id="cancelarEdicionProd" style="display:none;">Cancelar Edición</button>
+    </form>
+
+    <table id="productTable">
+        <thead>
+            <tr>
+                <th>Producto</th>
+                <th>Precio</th>
+                <th>Acciones</th>
+            </tr>
+        </thead>
+        <tbody>
+            <!-- Se llenará dinámicamente -->
+        </tbody>
+    </table>
+
+    <script>
+        var editProdIndex = -1;
+
+        function cargarProductos() {
+          return JSON.parse(localStorage.getItem('productos')) || [];
+        }
+
+        function guardarProductos(productos) {
+          localStorage.setItem('productos', JSON.stringify(productos));
+        }
+
+        function renderProductos() {
+          var productos = cargarProductos();
+          var tbody = document.getElementById('productTable').getElementsByTagName('tbody')[0];
+          tbody.innerHTML = "";
+          productos.forEach(function(prod, index) {
+            var fila = tbody.insertRow();
+            fila.insertCell(0).innerText = prod.nombre;
+            fila.insertCell(1).innerText = prod.precio;
+            var acciones = fila.insertCell(2);
+            acciones.innerHTML = "<span class='accion' onclick='editarProducto(" + index + ")'>Editar</span> | " +
+                                 "<span class='accion' onclick='eliminarProducto(" + index + ")'>Eliminar</span>";
+          });
+        }
+
+        document.getElementById('productForm').addEventListener('submit', function(e) {
+          e.preventDefault();
+          var nombre = document.getElementById('productName').value;
+          var precio = parseFloat(document.getElementById('productPrice').value).toFixed(2);
+          var productos = cargarProductos();
+
+          if (editProdIndex === -1) {
+            productos.push({ nombre: nombre, precio: precio });
+          } else {
+            productos[editProdIndex] = { nombre: nombre, precio: precio };
+            editProdIndex = -1;
+            document.getElementById('cancelarEdicionProd').style.display = "none";
+          }
+          guardarProductos(productos);
+          renderProductos();
+          document.getElementById('productForm').reset();
+        });
+
+        function editarProducto(index) {
+          var productos = cargarProductos();
+          var prod = productos[index];
+          document.getElementById('productName').value = prod.nombre;
+          document.getElementById('productPrice').value = prod.precio;
+          editProdIndex = index;
+          document.getElementById('cancelarEdicionProd').style.display = "inline-block";
+        }
+
+        document.getElementById('cancelarEdicionProd').addEventListener('click', function() {
+          editProdIndex = -1;
+          this.style.display = "none";
+          document.getElementById('productForm').reset();
+        });
+
+        function eliminarProducto(index) {
+          var productos = cargarProductos();
+          productos.splice(index, 1);
+          guardarProductos(productos);
+          renderProductos();
+        }
+
+        window.editarProducto = editarProducto;
+        window.eliminarProducto = eliminarProducto;
+
+        renderProductos();
+    </script>
+</body>
+</html>

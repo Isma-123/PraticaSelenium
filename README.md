@@ -1,22 +1,21 @@
-# Pruebas Automatizadas con Selenium
+# Pruebas Automatizadas con Selenium, HTML, CSS, JS y C#
 
-Este proyecto contiene pruebas automatizadas utilizando Selenium WebDriver para validar el funcionamiento de una aplicación web. Las pruebas están desarrolladas en Python y se integran con Pytest para facilitar su ejecución y mantenimiento.
+Este proyecto implementa pruebas automatizadas para una aplicación web desarrollada con HTML, CSS y JavaScript. Las pruebas están escritas en C# utilizando Selenium WebDriver y se ejecutan desde Visual Studio.
 
 ## Contenido del Proyecto
 
-- **tests/**: Carpeta que contiene los archivos con las pruebas automatizadas.
-- **config/**: Configuraciones y archivos auxiliares para la ejecución de pruebas.
-- **requirements.txt**: Archivo con las dependencias necesarias.
+- **UI/**: Carpeta que contiene la aplicación web (HTML, CSS y JavaScript) que se va a probar.
+- **Tests/**: Carpeta con las pruebas automatizadas escritas en C#.
+- **Drivers/**: Directorio donde se encuentran los drivers necesarios (por ejemplo, ChromeDriver).
+- **Proyecto.sln**: Archivo de solución de Visual Studio.
 
 ## Requisitos
 
-- Python 3.6 o superior.
-- Selenium WebDriver.
-- Un navegador compatible (por ejemplo, Chrome o Firefox) y su respectivo driver.
-- Pytest para la ejecución de las pruebas.
-- Opcional: Un entorno virtual como virtualenv o Pipenv para gestionar las dependencias.
+- Visual Studio o Visual Studio Code con el .NET Core SDK instalado (recomendado .NET Core 3.1 o superior).
+- Selenium WebDriver y dependencias administradas vía NuGet.
+- Un navegador compatible (Chrome, Firefox, etc.) y su respectivo driver.
 
-## Instalación
+## Instalación y Configuración
 
 1. **Clonar el repositorio:**
    ```bash
